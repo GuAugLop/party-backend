@@ -14,3 +14,5 @@
   <li>Remoção de publicações</li>
   <li>Adição de comentários em uma publicação</li>
 </ul>
+
+<p>Muitas das variáveis sensíveis não estão omitidas de forma proposital, já que esse projeto não passa de algo para portifólio e seus serviços externos são serviços públicos e gratuitos</p>
