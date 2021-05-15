@@ -2,7 +2,7 @@
 
 <hr>
 <h2>Descrição</h2>
-<p>Essa o lado do servidor da aplicação Party, ainda está em desenvolvimento e passará por diversas atualizações.</p>
+<p>Esse é o lado do servidor da aplicação Party, ainda está em desenvolvimento e passará por diversas atualizações.</p>
 <hr>
 <p>No momento, essas são as atuais funções da API.</p>
 <ul>
