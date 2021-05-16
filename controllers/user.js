@@ -72,7 +72,9 @@ route.post("/avatar", async (req, res) => {
     return res.status(200).send({ user: newUser });
   } catch (err) {
     console.log(err);
-    deleteImage(newPath);
+    if (newPath) {
+      deleteImage(newPath);
+    }
     res.status(500).send({
       err: "internal_error",
       msg: "Houve um erro ao processar a requisição.",
