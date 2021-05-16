@@ -33,30 +33,39 @@ const multerConfig = {
   },
 };
 
-const compressImage = async (filePath, size = 720) => {
-  const newPath = (filePath.split(".")[0] + ".webp").replaceAll(/[\\]/g, "/");
-  return sharp(filePath)
-    .resize(size)
+const compressImage = async (req, res) => {
+  const { base64, name } = req.body;
+  const [fileName, format] = name.split(".");
+
+  const newName = `${fileName}-${Date.now()}.${format}`;
+  const pathFile = path.resolve(__dirname, "..", "tmp", "imgs", newName);
+  fs.writeFile(pathFile, base64, { encoding: "base64" }, function (err) {
+    console.log("File created");
+  });
+  const newPath = (pathFile.split(".")[0] + ".webp").replaceAll(/[\\]/g, "/");
+  return sharp(pathFile)
+    .resize(720)
     .toFormat("webp")
     .webp({ quality: 75 })
     .toBuffer()
     .then(async (data) => {
-      fs.access(filePath, fs.constants.R_OK, (err) => {
+      fs.access(pathFile, fs.constants.R_OK, (err) => {
         if (!err) {
-          const pathFile = path.resolve(__dirname, "..", filePath);
-          fs.unlink(pathFile, (err) => {
+          const file = path.resolve(__dirname, "..", pathFile);
+          fs.unlink(file, (err) => {
             if (err) console.log(err);
           });
         }
       });
 
-      fs.writeFile(newPath, data, (err) => {
+      return fs.writeFile(newPath, data, (err) => {
         if (err) {
           console.log(err);
         }
       });
     })
     .then(() => {
+      console.log(newPath);
       return newPath;
     });
 };

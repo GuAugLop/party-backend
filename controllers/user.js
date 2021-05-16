@@ -1,12 +1,10 @@
 const route = require("express").Router();
-const multer = require("multer");
-const { multerConfig, compressImage, deleteImage } = require("../config/image");
+const { compressImage, deleteImage } = require("../config/image");
 const userModel = require("../dbconfig/Schemas/user");
 const authMiddleware = require("../middlewares/auth");
 const path = require("path");
-const { compareSync } = require("bcrypt");
 
-/* route.use(authMiddleware); */
+route.use(authMiddleware);
 
 route.get("/users", async (req, res) => {
   try {
@@ -46,15 +44,8 @@ route.get("/users/:id", async (req, res) => {
   }
 });
 
-route.post("/avatar", multer(multerConfig).single("file"), async (req, res) => {
+route.post("/avatar", async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(401).send({
-        err: "missing_data",
-        msg: "É necessário o envio de uma imagem.",
-      });
-    }
-
     const email = req.user.email;
     const nowProfile = req.user.thumb.split("/").slice(-1).pop();
     if (!email) {
@@ -70,7 +61,7 @@ route.post("/avatar", multer(multerConfig).single("file"), async (req, res) => {
         .send({ err: "user_not_found", msg: "Usuário não encontrado." });
     }
 
-    let newPath = await compressImage(req.file.path, 480);
+    let newPath = await compressImage(req, res);
     user.thumb = newPath;
     const newUser = await user.save();
     if (nowProfile) {
@@ -80,7 +71,8 @@ route.post("/avatar", multer(multerConfig).single("file"), async (req, res) => {
     }
     return res.status(200).send({ user: newUser });
   } catch (err) {
-    deleteImage(req.file.path);
+    console.log(err);
+    deleteImage(newPath);
     res.status(500).send({
       err: "internal_error",
       msg: "Houve um erro ao processar a requisição.",

@@ -1,9 +1,13 @@
 # PARTY
 
 <hr>
-<h2>Descrição</h2>
-<p>Esse é o lado do servidor da aplicação Party, ainda está em desenvolvimento e passará por diversas atualizações.</p>
+
+## Descrição
+
+Esse é o lado do servidor da aplicação Party, ainda está em desenvolvimento e passará por diversas atualizações
+
 <hr>
+
 <p>No momento, essas são as atuais funções da API.</p>
 <ul>
   <li>Registro de usuário</li>
@@ -15,4 +19,4 @@
   <li>Adição de comentários em uma publicação</li>
 </ul>
 
-<p>Muitas das variáveis sensíveis não estão omitidas de forma proposital, já que esse projeto não passa de algo para portifólio e seus serviços externos são serviços públicos e gratuitos</p>
+Muitas das variáveis sensíveis não estão omitidas de forma proposital, já que esse projeto não passa de algo para portifólio e seus serviços externos são serviços públicos e gratuitos

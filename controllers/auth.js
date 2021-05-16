@@ -82,7 +82,7 @@ route.post("/register", async (req, res) => {
   } catch (err) {
     return res.status(500).send({
       err: "external_error",
-      msg: "Houve um erro ao tentar processar a requisição. Tente novamente mais tarde.",
+      msg: "Falha ao realizar o registro. Tente novamente mais tarde.",
     });
   }
 });
@@ -122,14 +122,13 @@ route.post("/login", async (req, res) => {
   } catch (err) {
     res.status(500).send({
       err: "external_error",
-      msg: "Houve um erro ao tentar processar a requisição. Tente novamente mais tarde.",
+      msg: "Falha ao realizar o login. Tente novamente mais tarde.",
     });
   }
 });
 
 route.post("/forgot", async (req, res) => {
   const { email, url } = req.body;
-  console.log({ email, url });
   try {
     const user = await userModel.findOne({ email });
 
@@ -150,7 +149,7 @@ route.post("/forgot", async (req, res) => {
     console.log(err);
     res.status(500).send({
       err: "external_error",
-      msg: "Houve um erro ao tentar processar a requisição. Tente novamente mais tarde.",
+      msg: "Falha ao enviar o email. Tente novamente mais tarde.",
     });
   }
 });
@@ -186,7 +185,7 @@ route.post("/reset-pass", async (req, res) => {
   } catch (err) {
     return res.status(500).send({
       err: "external_error",
-      msg: "Houve um erro ao tentar processar a requisição. Tente novamente mais tarde.",
+      msg: "Falha ao trocar a senha. Tente novamente mais tarde.",
     });
   }
 });
