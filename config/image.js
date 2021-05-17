@@ -39,9 +39,8 @@ const compressImage = async (req, res) => {
 
   const newName = `${fileName}-${Date.now()}.${format}`;
   const pathFile = path.resolve(__dirname, "..", "tmp", "imgs", newName);
-  fs.writeFile(pathFile, base64, { encoding: "base64" }, function (err) {
-    console.log("File created");
-  });
+  fs.writeFileSync(pathFile, base64, { encoding: "base64" });
+
   const newPath = (pathFile.split(".")[0] + ".webp").replaceAll(/[\\]/g, "/");
   return sharp(pathFile)
     .resize(720)
@@ -65,8 +64,10 @@ const compressImage = async (req, res) => {
       });
     })
     .then(() => {
-      console.log(newPath);
       return newPath;
+    })
+    .catch((err) => {
+      deleteImage(path.resolve(__dirname, "..", "tmp", "imgs", newName));
     });
 };
 
@@ -75,7 +76,7 @@ const deleteImage = (filePath) => {
     if (!err) {
       const pathFile = path.resolve(__dirname, "..", filePath);
       fs.unlink(pathFile, (err) => {
-        if (err) console.log(err);
+        if (err) console.log("erro");
       });
     }
   });

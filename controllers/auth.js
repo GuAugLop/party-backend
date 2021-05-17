@@ -5,6 +5,7 @@ const route = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("../config/jwt");
 const sendMail = require("../config/mail");
+const { verify } = require("../config/jwt");
 
 const regex = {
   email: {
@@ -14,6 +15,27 @@ const regex = {
     reg: /[a-zA-Z.]/g,
   },
 };
+
+//Token-Verify
+route.post("/token-verify", async (req, res) => {
+  try {
+    const token = req.headers.authorization;
+    const id = await verify(token);
+    if (!id) {
+      return res
+        .status(401)
+        .send({ err: "invalid_token", msg: "Token Inválido" });
+    }
+
+    const user = await userModel.findById(id.data._id);
+    res.send({ user });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .send({ err: "failed_verify", msg: "Falha ao validar token." });
+  }
+});
 //Register
 route.post("/register", async (req, res) => {
   try {

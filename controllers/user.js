@@ -61,7 +61,7 @@ route.post("/avatar", async (req, res) => {
         .send({ err: "user_not_found", msg: "Usuário não encontrado." });
     }
 
-    let newPath = await compressImage(req, res);
+    var newPath = await compressImage(req, res);
     user.thumb = newPath;
     const newUser = await user.save();
     if (nowProfile) {
@@ -71,7 +71,6 @@ route.post("/avatar", async (req, res) => {
     }
     return res.status(200).send({ user: newUser });
   } catch (err) {
-    console.log(err);
     if (newPath) {
       deleteImage(newPath);
     }
