@@ -11,7 +11,10 @@ route.use(authMiddleware);
 
 route.get("/posts", async (req, res) => {
   try {
-    const posts = await postModel.find().populate([{ path: "user" }]);
+    const posts = await postModel
+      .find()
+      .populate([{ path: "user" }])
+      .sort({ createdAt: -1 });
     res.send({ posts });
   } catch (err) {
     res.status(400).send({
@@ -86,25 +89,24 @@ route.delete("/posts/:id", async (req, res) => {
   }
 });
 
-route.post("/posts", multer(multerConfig).single("file"), async (req, res) => {
+route.post("/posts", async (req, res) => {
   try {
     const { body } = req.body;
+    const user = await userModel.findById(req.user.id);
 
-    if (!req.file) {
-      return res.send({
-        err: "missing_data",
-        msg: "É necessário o envio de uma imagem.",
-      });
+    if (!user) {
+      return res
+        .status(401)
+        .send({ err: "Invalid Token", msg: "Token inválido" });
     }
 
-    const path = await compressImage(req.file.path);
+    var newPath = await compressImage(req, res);
     const post = await postModel.create({
-      thumb: path,
+      thumb: newPath,
       body,
       user: req.user._id,
     });
 
-    const user = await userModel.findById(req.user.id);
     user.posts.push(post._id);
     await user.save();
 

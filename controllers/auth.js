@@ -28,6 +28,11 @@ route.post("/token-verify", async (req, res) => {
     }
 
     const user = await userModel.findById(id.data._id);
+    if (!user) {
+      return res
+        .status(401)
+        .send({ err: "invalid_token", msg: "Token Inválido" });
+    }
     res.send({ user });
   } catch (err) {
     console.log(err);
