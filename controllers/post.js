@@ -113,6 +113,7 @@ route.post("/posts", async (req, res) => {
 
     return res.send({ post });
   } catch (err) {
+    console.log(err);
     res.status(500).send({
       err: "internal_error",
       msg: "Houve um erro ao processar a requisição.",
