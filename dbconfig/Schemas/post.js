@@ -1,7 +1,6 @@
 require("dotenv").config();
 const mongoose = require("../index");
 const Schema = mongoose.Schema;
-const URL_APPLICATION = process.env.URL_APPLICATION;
 
 const postSchema = new Schema({
   user: {
