@@ -1,6 +1,6 @@
 const route = require("express").Router();
 const multer = require("multer");
-const { multerConfig, compressImage, deleteImage } = require("../config/image");
+const { compressImage, deleteImage } = require("../config/image");
 const postModel = require("../dbconfig/Schemas/post");
 const commentModel = require("../dbconfig/Schemas/comment");
 const authMiddleware = require("../middlewares/auth");
@@ -101,6 +101,7 @@ route.post("/posts", async (req, res) => {
     }
 
     var newPath = await compressImage(req, res);
+
     const post = await postModel.create({
       thumb: newPath,
       body,
@@ -112,7 +113,6 @@ route.post("/posts", async (req, res) => {
 
     return res.send({ post });
   } catch (err) {
-    deleteImage(req.file.path);
     res.status(500).send({
       err: "internal_error",
       msg: "Houve um erro ao processar a requisição.",
@@ -120,7 +120,7 @@ route.post("/posts", async (req, res) => {
   }
 });
 
-route.get("/post/comments/:id", async (req, res) => {
+route.get("/posts/comments/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const post = await postModel
@@ -142,7 +142,7 @@ route.get("/post/comments/:id", async (req, res) => {
   }
 });
 
-route.post("/post/comments/:postId", async (req, res) => {
+route.post("/posts/comments/:postId", async (req, res) => {
   try {
     const { message } = req.body;
     const { _id } = req.user;

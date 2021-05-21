@@ -31,10 +31,10 @@ route.get("/users", async (req, res) => {
   }
 });
 
-route.get("/users/:id", async (req, res) => {
+route.get("/users/:username", async (req, res) => {
   try {
-    const { id } = req.params;
-    const user = await userModel.findById(id).populate("posts");
+    const { username } = req.params;
+    const user = await userModel.findOne({ username }).populate("posts");
     res.send({ user });
   } catch (err) {
     res.status(500).send({

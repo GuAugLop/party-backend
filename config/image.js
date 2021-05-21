@@ -1,7 +1,30 @@
+require("dotenv").config();
 const multer = require("multer");
 const sharp = require("sharp");
 const fs = require("fs");
 const path = require("path");
+var AWS = require("aws-sdk");
+const { promisify } = require("util");
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_KEY,
+  region: process.env.AWS_DEFAULT_REGION,
+});
+
+const s3 = new AWS.S3();
+
+const upload = (params) => {
+  return new Promise((resolve, reject) => {
+    s3.upload(params, (err, data) => {
+      if (err) {
+        reject("Falha ao completar requisição");
+      } else {
+        resolve(data);
+      }
+    });
+  });
+};
 
 const multerConfig = {
   dest: path.resolve(__dirname, "..", "tmp", "imgs"),
@@ -37,38 +60,41 @@ const compressImage = async (req, res) => {
   const { base64, name } = req.body;
   const [fileName, format] = name.split(".");
 
-  const newName = `${fileName}-${Date.now()}.${format}`;
+  const newName = `${fileName}-${Date.now()}`;
   const pathFile = path.resolve(__dirname, "..", "tmp", "imgs", newName);
   fs.writeFileSync(pathFile, base64, { encoding: "base64" });
+  let newPath = `https://partyrs.s3-sa-east-1.amazonaws.com/${newName}`;
 
-  const newPath = (pathFile.split(".")[0] + ".webp").replaceAll(/[\\]/g, "/");
-  return sharp(pathFile)
-    .resize(720)
-    .toFormat("webp")
-    .webp({ quality: 75 })
-    .toBuffer()
-    .then(async (data) => {
-      fs.access(pathFile, fs.constants.R_OK, (err) => {
-        if (!err) {
-          const file = path.resolve(__dirname, "..", pathFile);
-          fs.unlink(file, (err) => {
-            if (err) console.log(err);
-          });
-        }
-      });
+  try {
+    const data = await sharp(pathFile)
+      .resize(720)
+      .toFormat("webp")
+      .webp({ quality: 75 })
+      .toBuffer();
 
-      return fs.writeFile(newPath, data, (err) => {
-        if (err) {
-          console.log(err);
-        }
-      });
-    })
-    .then(() => {
-      return newPath;
-    })
-    .catch((err) => {
-      deleteImage(path.resolve(__dirname, "..", "tmp", "imgs", newName));
+    fs.access(pathFile, fs.constants.R_OK, (err) => {
+      if (!err) {
+        const file = path.resolve(__dirname, "..", pathFile);
+        fs.unlink(file, (err) => {
+          if (err) console.log(err);
+        });
+      }
     });
+
+    const params = {
+      Bucket: process.env.S3_BUCKET,
+      Key: `${newName}`,
+      Body: data,
+      ACL: "public-read",
+      ContentEncoding: "webp", // required
+      ContentType: `image/webp`,
+    };
+
+    const finalPath = await upload(params);
+    return finalPath.Location;
+  } catch (err) {
+    deleteImage(path.resolve(__dirname, "..", "tmp", "imgs", newName));
+  }
 };
 
 const deleteImage = (filePath) => {
@@ -76,7 +102,7 @@ const deleteImage = (filePath) => {
     if (!err) {
       const pathFile = path.resolve(__dirname, "..", filePath);
       fs.unlink(pathFile, (err) => {
-        if (err) console.log("erro");
+        if (err) console.log(err);
       });
     }
   });

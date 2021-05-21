@@ -28,13 +28,4 @@ const postSchema = new Schema({
   },
 });
 
-postSchema.pre("save", async function () {
-  try {
-    const fileName = this.thumb.split("/");
-    const newURL = fileName.slice(-1).pop();
-    this.thumb = await `${URL_APPLICATION}/tmp/imgs/${newURL}`;
-    console.log(this.thumb);
-  } catch (err) {}
-});
-
 module.exports = postModel = mongoose.model("posts", postSchema);

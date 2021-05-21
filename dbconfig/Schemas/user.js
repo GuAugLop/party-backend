@@ -56,16 +56,4 @@ userSchema.pre("save", async function () {
   }
 });
 
-userSchema.pre("save", async function () {
-  try {
-    if (this.thumb) {
-      const fileName = this.thumb.split("/");
-      const newURL = fileName.slice(-1).pop();
-      this.thumb = await `${URL_APPLICATION}/tmp/imgs/${newURL}`;
-    }
-  } catch (err) {
-    console.log(err);
-  }
-});
-
 module.exports = userModel = mongoose.model("users", userSchema);
