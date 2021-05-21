@@ -66,7 +66,7 @@ route.post("/avatar", async (req, res) => {
     const newUser = await user.save();
     if (nowProfile) {
       deleteImage(
-        path.resolve(__dirname, "..", "tmp", "imgs") + `\\${nowProfile}`
+        path.resolve(__dirname, "..", "tmps", "imgs") + `\\${nowProfile}`
       );
     }
     return res.status(200).send({ user: newUser });
@@ -95,7 +95,7 @@ route.delete("/avatar", async (req, res) => {
 
     if (nowProfile) {
       deleteImage(
-        path.resolve(__dirname, "..", "tmp", "imgs") + `\\${nowProfile}`
+        path.resolve(__dirname, "..", "tmps", "imgs") + `\\${nowProfile}`
       );
     }
 

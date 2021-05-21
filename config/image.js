@@ -27,10 +27,10 @@ const upload = (params) => {
 };
 
 const multerConfig = {
-  dest: path.resolve(__dirname, "..", "tmp", "imgs"),
+  dest: path.resolve(__dirname, "..", "tmps", "imgs"),
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, path.resolve(__dirname, "..", "tmp", "imgs"));
+      cb(null, path.resolve(__dirname, "..", "tmps", "imgs"));
     },
     filename: (req, file, cb) => {
       const fileName = Date.now().toString() + "-" + file.originalname;
@@ -61,7 +61,7 @@ const compressImage = async (req, res) => {
   const [fileName, format] = name.split(".");
 
   const newName = `${fileName}-${Date.now()}`;
-  const pathFile = path.resolve(__dirname, "..", "tmp", "imgs", newName);
+  const pathFile = path.resolve(__dirname, "..", "tmps", "imgs", newName);
   fs.writeFileSync(pathFile, base64, { encoding: "base64" });
   let newPath = `https://partyrs.s3-sa-east-1.amazonaws.com/${newName}`;
 
@@ -93,7 +93,7 @@ const compressImage = async (req, res) => {
     const finalPath = await upload(params);
     return finalPath.Location;
   } catch (err) {
-    deleteImage(path.resolve(__dirname, "..", "tmp", "imgs", newName));
+    deleteImage(path.resolve(__dirname, "..", "tmps", "imgs", newName));
   }
 };
 

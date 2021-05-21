@@ -71,7 +71,7 @@ route.delete("/posts/:id", async (req, res) => {
     const nowThumb = post.thumb.split("/").slice(-1).pop();
     if (nowThumb) {
       deleteImage(
-        path.resolve(__dirname, "..", "tmp", "imgs") + `\\${nowThumb}`
+        path.resolve(__dirname, "..", "tmps", "imgs") + `\\${nowThumb}`
       );
     }
     const userPosts = user.posts.filter(
