@@ -63,7 +63,6 @@ const compressImage = async (req, res) => {
   const newName = `${fileName}-${Date.now()}`;
   const pathFile = path.resolve(__dirname, "..", "tmps", "imgs", newName);
   fs.writeFileSync(pathFile, base64, { encoding: "base64" });
-  let newPath = `https://partyrs.s3-sa-east-1.amazonaws.com/${newName}`;
 
   try {
     const data = await sharp(pathFile)
