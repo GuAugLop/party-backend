@@ -11,7 +11,7 @@ route.use(authMiddleware);
 
 route.get("/posts", async (req, res) => {
   const page = req.query.page || 1;
-  const limit = 10;
+  const limit = req.query.limit || 8;
   const salt = (page - 1) * limit;
 
   try {
