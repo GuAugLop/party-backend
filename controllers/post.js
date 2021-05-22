@@ -44,6 +44,7 @@ route.get("/posts/:id", async (req, res) => {
         .send({ err: "post_not_found", msg: "Publicação não encontrada." });
     res.send({ post });
   } catch (err) {
+    console.log(err);
     res.status(400).send({
       err: "internal_error",
       msg: "houve um erro ao processar a requisição.",
@@ -169,6 +170,37 @@ route.post("/posts/comments/:postId", async (req, res) => {
     await post.save();
     res.send();
   } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      err: "internal_error",
+      msg: "Houve um erro ao processar a requisição.",
+    });
+  }
+});
+
+route.post("/posts/like/:postId", async (req, res) => {
+  try {
+    const { id } = req.user;
+
+    const post = await postModel.findById(req.params.postId);
+
+    if (!post) {
+      return res
+        .status(404)
+        .send({ err: "Post not found", msg: "Publicação não encontrada." });
+    }
+
+    if (post.likes.find((post) => post == id)) {
+      post.likes = post.likes.filter((like) => like != id);
+      post.save();
+      return res.send({ post });
+    } else {
+      post.likes.push(id);
+      post.save();
+      res.send({ post });
+    }
+  } catch (err) {
+    console.log(err);
     res.status(500).send({
       err: "internal_error",
       msg: "Houve um erro ao processar a requisição.",

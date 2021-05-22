@@ -102,7 +102,13 @@ route.delete("/avatar", async (req, res) => {
     user.thumb = "";
     await user.save();
     return res.send({ user });
-  } catch (err) {}
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      err: "internal_error",
+      msg: "Houve um erro ao processar a requisição.",
+    });
+  }
 });
 
 module.exports = route;
