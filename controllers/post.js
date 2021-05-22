@@ -23,6 +23,7 @@ route.get("/posts", async (req, res) => {
       .sort({ createdAt: -1 });
     res.send({ posts });
   } catch (err) {
+    console.log(err);
     res.status(400).send({
       err: "internal_error",
       msg: "houve um erro ao processar a requisição.",
