@@ -10,11 +10,17 @@ const path = require("path");
 route.use(authMiddleware);
 
 route.get("/posts", async (req, res) => {
+  const page = req.query.page || 1;
+  const limit = 10;
+  const salt = (page - 1) * limit;
+
   try {
     const posts = await postModel
       .find()
       .populate([{ path: "user" }])
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(salt);
     res.send({ posts });
   } catch (err) {
     res.status(400).send({
