@@ -17,10 +17,10 @@ route.get("/posts", async (req, res) => {
   try {
     const posts = await postModel
       .find()
-      .populate([{ path: "user" }])
-      .sort({ createdAt: -1 })
       .limit(limit)
-      .skip(salt);
+      .skip(salt)
+      .populate([{ path: "user" }])
+      .sort({ createdAt: -1 });
     res.send({ posts });
   } catch (err) {
     res.status(400).send({
