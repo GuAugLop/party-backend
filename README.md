@@ -18,6 +18,7 @@ Esse é o lado do servidor da aplicação Party, ainda está em desenvolvimento 
   <li>Remoção de publicações</li>
   <li>Adição de comentários em uma publicação</li>
   <li>Adição e remoção de curtidas em publicações</li>
+  <li>Visualiação de perfil</li>
 </ul>
 
 Muitas das variáveis sensíveis não estão omitidas de forma proposital, já que esse projeto não passa de algo para portifólio e seus serviços externos são serviços públicos e gratuitos

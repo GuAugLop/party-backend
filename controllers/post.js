@@ -12,18 +12,18 @@ route.use(authMiddleware);
 route.get("/posts", async (req, res) => {
   const page = req.query.page || 1;
   const limit = parseInt(req.query.limit) || 8;
+  const user = req.query.user || "";
   const salt = (page - 1) * limit;
 
   try {
     const posts = await postModel
-      .find()
+      .find(user ? { user } : {})
       .limit(limit)
       .skip(salt)
       .populate([{ path: "user" }])
       .sort({ createdAt: -1 });
     res.send({ posts });
   } catch (err) {
-    console.log(err);
     res.status(400).send({
       err: "internal_error",
       msg: "houve um erro ao processar a requisição.",
@@ -192,15 +192,14 @@ route.post("/posts/like/:postId", async (req, res) => {
 
     if (post.likes.find((post) => post == id)) {
       post.likes = post.likes.filter((like) => like != id);
-      post.save();
+      await post.save();
       return res.send({ post });
     } else {
       post.likes.push(id);
-      post.save();
+      await post.save();
       res.send({ post });
     }
   } catch (err) {
-    console.log(err);
     res.status(500).send({
       err: "internal_error",
       msg: "Houve um erro ao processar a requisição.",
